@@ -3,7 +3,6 @@ package com.qa.account.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,10 +17,10 @@ public class AccountService {
 	private RestTemplate rest;
 
 	@Autowired
-	public AccountService(AccountRepo repo, RestTemplateBuilder builder) {
+	public AccountService(AccountRepo repo, RestTemplate rest) {
 		super();
 		this.repo = repo;
-		this.rest = builder.build();
+		this.rest = rest;
 	}
 
 	public List<Account> getAccounts() {
@@ -34,9 +33,9 @@ public class AccountService {
 	}
 
 	public Account addAccount(Account account) { // Account fname + lname
-		String accountNumber = this.rest.getForObject("http://localhost:8082/getNum", String.class);
+		String accountNumber = this.rest.getForObject("http://NUM-GEN/getNum", String.class);
 		account.setAccountNumber(accountNumber); // string accNo
-		String prize = this.rest.getForObject("http://localhost:8083/genPrize/" + accountNumber, String.class);
+		String prize = this.rest.getForObject("http://PRIZE-GEN/genPrize/" + accountNumber, String.class);
 		account.setPrize(Double.parseDouble(prize)); // double prize
 		return this.repo.save(account); // Account toSave Account saved
 	}
